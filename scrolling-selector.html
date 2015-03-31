@@ -1,0 +1,170 @@
+<link rel="import" href="../polymer/polymer.html">
+<script src="zynga-scroller/Animate.js"></script>
+<script src="zynga-scroller/Scroller.js"></script>
+
+<polymer-element name="scrolling-selector">
+
+<template>
+
+    <style>
+
+        :host {
+            display: block;
+            position: relative;
+            -webkit-perspective: 1000px;
+            perspective: 1000px;
+            -webkit-user-select: none;
+        }
+
+        ::content > * {
+            display: none;
+        }
+
+        #optionsWheel {
+            -webkit-transform-style: preserve-3d;
+            transform-style: preserve-3d;
+            overflow: visible;
+            position: relative;
+            height: 100%;
+        }
+
+        #optionsWheel > * {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            margin: auto 0;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+
+            text-align: center;
+            line-height: 60px;
+            font-size: 16px;
+            font-family: 'Helvetica Neue';
+        }
+
+        .slid {
+            height: 30px;
+            border-top: solid 1px;
+            border-bottom: solid 1px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            margin: auto 0;
+        }
+
+    </style>
+
+    <div id="optionsWheel"></div>
+    <div class="slid"></div>
+    <content></content>
+
+</template>
+
+<script>
+
+(function() {
+    'use strict';
+
+    var stepSize = 40;
+    var scrollBuffer = 1000 * stepSize;
+
+    Polymer({
+
+        attached: function() {
+            this.setupScroller();
+            this.setupEventListeners();
+            this.renderOptionsWheel();
+        },
+
+        setupScroller: function() {
+            var scroller = this.scroller = new Scroller(this.scroll.bind(this), {
+                scrollingX: false,
+                snapping: true
+            });
+
+            scroller.setDimensions(1, 1, 1, 2 * scrollBuffer);
+            scroller.scrollTo(0, scrollBuffer);
+            scroller.setSnapSize(0, stepSize);
+        },
+
+        setupEventListeners: function() {
+            var scroller = this.scroller;
+            var scrolling = false;
+
+            if ('ontouchstart' in window) {
+                this.addEventListener('touchstart', function(e) {
+                    scroller.doTouchStart(e.touches, e.timeStamp);
+                    scrolling = true;
+                    e.preventDefault();
+                }, false);
+                document.addEventListener('touchmove', function(e) {
+                    if (scrolling) {
+                        scroller.doTouchMove(e.touches, e.timeStamp);
+                    }
+                }, false);
+                document.addEventListener('touchend', function(e) {
+                    if (scrolling) {
+                        scroller.doTouchEnd(e.timeStamp);
+                    }
+                    scrolling = false;
+                }, false);
+            } else {
+                this.addEventListener('mousedown', function(e) {
+                    scroller.doTouchStart([e], e.timeStamp);
+                    scrolling = true;
+                }, false);
+                document.addEventListener('mousemove', function(e) {
+                    if (scrolling) {
+                        scroller.doTouchMove([e], e.timeStamp);
+                    }
+                }, false);
+                document.addEventListener('mouseup', function(e) {
+                    if (scrolling) {
+                        scroller.doTouchEnd(e.timeStamp);
+                    }
+                    scrolling = false;
+                }, false);
+            }
+
+        },
+
+        renderOptionsWheel: function() {
+            var n = 20;
+            var l = 60;
+            var a = this._a = 2 * Math.PI / n;
+            var r = l / 2 / Math.tan(a);
+            var wheel = this.$.optionsWheel;
+
+            wheel.style.transformOrigin = 'center center ' + (-r) + 'px';
+
+            var el;
+            for (var i = 0; i < n ; i++) {
+                el = document.createElement('div');
+                el.innerHTML = i;
+                el.style.height = l + 'px';
+                el.style.transformOrigin = el.style.webkitTransformOrigin = 'center center ' + (-r) + 'px';
+                el.style.transform = el.style.webkitTransform = 'rotateX(' + a * i + 'rad)';
+                wheel.appendChild(el);
+            }
+        },
+
+        scroll: function(x, y) {
+            var i = (y - scrollBuffer) / stepSize;
+            var a = this._a * i;
+            var wheel = this.$.optionsWheel;
+
+            wheel.style.transform = wheel.style.webkitTransform = 'rotateX(' + a + 'rad)';
+            console.log(y);
+        }
+
+    });
+
+})();
+
+</script>
+
+</polymer-element>
