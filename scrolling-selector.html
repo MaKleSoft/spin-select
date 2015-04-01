@@ -37,11 +37,7 @@
             margin: auto 0;
             -webkit-backface-visibility: hidden;
             backface-visibility: hidden;
-
             text-align: center;
-            line-height: 60px;
-            font-size: 16px;
-            font-family: 'Helvetica Neue';
         }
 
         .slid {
@@ -74,10 +70,25 @@
 
     Polymer({
 
+        _faces: [],
+        _faceInd: 0,
+        _optInd: 0,
+
+        publish: {
+            options: [],
+            faceCount: 20,
+            faceHeight: 60
+        },
+
+        observe: {
+            'faceCount faceHeight': 'renderWheel',
+            'options': 'updateFaces'
+        },
+
         attached: function() {
             this.setupScroller();
+            this.renderWheel();
             this.setupEventListeners();
-            this.renderOptionsWheel();
         },
 
         setupScroller: function() {
@@ -132,24 +143,27 @@
 
         },
 
-        renderOptionsWheel: function() {
-            var n = 20;
-            var l = 60;
+        renderWheel: function() {
+            var n = this.faceCount;
+            var l = this.faceHeight;
             var a = this._a = 2 * Math.PI / n;
             var r = l / 2 / Math.tan(a);
             var wheel = this.$.optionsWheel;
 
             wheel.style.transformOrigin = 'center center ' + (-r) + 'px';
 
+            this._faces = [];
             var el;
             for (var i = 0; i < n ; i++) {
                 el = document.createElement('div');
-                el.innerHTML = i;
-                el.style.height = l + 'px';
+                el.style.height = el.style.lineHeight = l + 'px';
                 el.style.transformOrigin = el.style.webkitTransformOrigin = 'center center ' + (-r) + 'px';
-                el.style.transform = el.style.webkitTransform = 'rotateX(' + a * i + 'rad)';
+                el.style.transform = el.style.webkitTransform = 'rotateX(' + (-a * i) + 'rad)';
                 wheel.appendChild(el);
+                this._faces.push(el);
             }
+
+            this.updateFaces();
         },
 
         scroll: function(x, y) {
@@ -157,8 +171,22 @@
             var a = this._a * i;
             var wheel = this.$.optionsWheel;
 
+            this._optInd = Math.floor(i % this.options.length);
+            this._faceInd = Math.floor(i % this.faceCount);
+
+            this.updateFaces();
+
             wheel.style.transform = wheel.style.webkitTransform = 'rotateX(' + a + 'rad)';
-            console.log(y);
+        },
+
+        updateFaces: function() {
+            var faceCount = this._faces.length;
+            var optCount = this.options.length;
+
+            for (var j = -Math.floor(faceCount/2), to = Math.ceil(faceCount/2); j < to; j++) {
+                this._faces[(faceCount + this._faceInd + j) % faceCount].innerHTML =
+                    this.options[(optCount + this._optInd + j) % optCount];
+            }
         }
 
     });
