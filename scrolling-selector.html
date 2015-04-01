@@ -150,6 +150,10 @@
             var r = l / 2 / Math.tan(a);
             var wheel = this.$.optionsWheel;
 
+            while (wheel.firstChild) {
+                wheel.removeChild(wheel.firstChild);
+            }
+
             wheel.style.transformOrigin = 'center center ' + (-r) + 'px';
 
             this._faces = [];
