@@ -77,7 +77,8 @@
         publish: {
             options: [],
             faceCount: 20,
-            faceHeight: 60
+            faceHeight: 60,
+            selected: 0
         },
 
         observe: {
@@ -94,7 +95,8 @@
         setupScroller: function() {
             var scroller = this.scroller = new Scroller(this.scroll.bind(this), {
                 scrollingX: false,
-                snapping: true
+                snapping: true,
+                scrollingComplete: this.scrollingComplete.bind(this)
             });
 
             scroller.setDimensions(1, 1, 1, 2 * scrollBuffer);
@@ -193,6 +195,24 @@
                 this._faces[(faceCount + this._faceInd + j) % faceCount].innerHTML =
                     this.options[(optCount + this._optInd + j) % optCount];
             }
+        },
+
+        scrollingComplete: function() {
+            if (this.selected != this._optInd) {
+                this._ignoreSelectedChange = true;
+            }
+            this.selected = this._optInd;
+        },
+
+        selectedChanged: function(prev, curr) {
+            if (!this._ignoreSelectedChange) {
+                prev = prev || 0;
+                var diff = (curr - prev) * stepSize;
+                var scrollTop = this.scroller.getValues().top;
+                scrollTop += diff - scrollTop % stepSize;
+                this.scroller.scrollTo(0, scrollTop, true);
+            }
+            this._ignoreSelectedChange = false;
         }
 
     });
