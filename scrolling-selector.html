@@ -171,12 +171,14 @@
         },
 
         scroll: function(x, y) {
-            var i = y / stepSize;
+            var i = (y - scrollBuffer) / stepSize;
             var a = this._a * i;
             var wheel = this.$.optionsWheel;
+            var oCount = this.options.length;
+            var fCount = this.faceCount;
 
-            this._optInd = Math.floor(i % this.options.length);
-            this._faceInd = Math.floor(i % this.faceCount);
+            this._optInd = (oCount + Math.round(i % oCount)) % oCount;
+            this._faceInd = (fCount + Math.round(i % fCount)) % fCount;
 
             this.updateFaces();
 
