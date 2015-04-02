@@ -11,8 +11,6 @@
         :host {
             display: block;
             position: relative;
-            -webkit-perspective: 1000px;
-            perspective: 1000px;
             -webkit-user-select: none;
         }
 
@@ -70,6 +68,7 @@
 
     var stepSize = 40;
     var scrollBuffer = 1000 * stepSize;
+    var perspective = 1000;
 
     Polymer({
 
@@ -159,6 +158,8 @@
                 wheel.removeChild(wheel.firstChild);
             }
 
+            this.style.perspective = this.webkitPerspective = perspective + 'px';
+            this.style.height = 2 * r * perspective / (perspective + r) + 'px';
             wheel.style.transformOrigin = 'center center ' + (-r) + 'px';
 
             this._faces = [];
