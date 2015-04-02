@@ -210,12 +210,14 @@
             this.selected = this._optInd;
         },
 
-        selectedChanged: function(prev, curr) {
+        selectedChanged: function(old) {
             if (!this._ignoreSelectedChange) {
-                prev = prev || 0;
-                var diff = (curr - prev) * stepSize;
-                var scrollTop = this.scroller.getValues().top;
-                scrollTop += diff - scrollTop % stepSize;
+                var i = Math.round((this.scroller.getValues().top - scrollBuffer) / stepSize);
+                var l = this.options.length;
+                var prev = i - i % l - l + this.selected;
+                var next = i + (l - i % l) - l + this.selected;
+                var scrollTop = (Math.abs(i - prev) < Math.abs(i - next) ? prev : next) * stepSize;
+                scrollTop += scrollBuffer;
                 this.scroller.scrollTo(0, scrollTop, true);
             }
             this._ignoreSelectedChange = false;
