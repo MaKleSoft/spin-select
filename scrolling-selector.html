@@ -2,7 +2,7 @@
 <script src="zynga-scroller/Animate.js"></script>
 <script src="zynga-scroller/Scroller.js"></script>
 
-<polymer-element name="scrolling-selector">
+<polymer-element name="scrolling-selector" touch-action="pan-y">
 
 <template>
 
@@ -38,6 +38,9 @@
             -webkit-backface-visibility: hidden;
             backface-visibility: hidden;
             text-align: center;
+            height: 30px;
+            line-height: 30px;
+            cursor: pointer;
         }
 
         .slid {
@@ -162,9 +165,9 @@
             var el;
             for (var i = 0; i < n ; i++) {
                 el = document.createElement('div');
-                el.style.height = el.style.lineHeight = l + 'px';
                 el.style.transformOrigin = el.style.webkitTransformOrigin = 'center center ' + (-r) + 'px';
                 el.style.transform = el.style.webkitTransform = 'rotateX(' + (-a * i) + 'rad)';
+                PolymerGestures.addEventListener(el, 'tap', this.optionTapped.bind(this));
                 wheel.appendChild(el);
                 this._faces.push(el);
             }
@@ -191,9 +194,12 @@
             var faceCount = this._faces.length;
             var optCount = this.options.length;
 
+            var el, i;
             for (var j = -Math.floor(faceCount/2), to = Math.ceil(faceCount/2); j < to; j++) {
-                this._faces[(faceCount + this._faceInd + j) % faceCount].innerHTML =
-                    this.options[(optCount + this._optInd + j) % optCount];
+                el = this._faces[(faceCount + this._faceInd + j) % faceCount];
+                i = (optCount + this._optInd + j) % optCount;
+                el.innerHTML = this.options[i];
+                el.setAttribute('index', i);
             }
         },
 
@@ -213,6 +219,11 @@
                 this.scroller.scrollTo(0, scrollTop, true);
             }
             this._ignoreSelectedChange = false;
+        },
+
+        optionTapped: function(e) {
+            console.log(e.target);
+            this.selected = parseInt(e.target.getAttribute('index'), 10);
         }
 
     });
