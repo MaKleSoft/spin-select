@@ -11,6 +11,7 @@
         :host {
             display: block;
             position: relative;
+            overflow: hidden;
             -webkit-user-select: none;
         }
 
@@ -41,23 +42,47 @@
             cursor: pointer;
         }
 
+        .overlay {
+            pointer-events: none;
+        }
+
         .slid {
             height: 35px;
             border-top: solid 1px;
             border-bottom: solid 1px;
+        }
+
+        .screen {
+            background: rgba(255, 255, 255, 0.7);
+        }
+
+        .screen::after {
+            content: '';
+            display: block;
             position: absolute;
+            width: 100%;
+            height: 50px;
+        }
+
+        .screen.top::after {
             top: 0;
-            left: 0;
-            right: 0;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0));
+        }
+
+        .screen.bottom::after {
             bottom: 0;
-            margin: auto 0;
-            pointer-events: none;
+            background: linear-gradient(to top, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0));
         }
 
     </style>
 
     <div id="optionsWheel"></div>
-    <div class="slid"></div>
+
+    <div fit layout vertical class="overlay">
+        <div flex class="screen top"></div>
+        <div class="slid"></div>
+        <div flex class="screen bottom"></div>
+    </div>
     <content></content>
 
 </template>
