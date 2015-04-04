@@ -46,7 +46,9 @@
             'options': 'updateFaces'
         },
 
-        attached: function() {
+        domReady: function() {
+            this.options = this.options && this.options.length ?
+                this.options : this.querySelectorAll('option');
             this.setupScroller();
             this.renderWheel();
             this.setupEventListeners();

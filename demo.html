@@ -11,27 +11,26 @@
         <style>
             wheel-select {
                 font-family: sans-serif;
-                margin: 100px 0;
             }
         </style>
 
     </head>
-    <body>
-
-        <wheel-select options="[
-            {'label': 'January', 'value': 0},
-            {'label': 'Feburary', 'value': 1},
-            {'label': 'March', 'value': 2},
-            {'label': 'April', 'value': 3},
-            {'label': 'May', 'value': 4},
-            {'label': 'June', 'value': 5},
-            {'label': 'July', 'value': 6},
-            {'label': 'August', 'value': 7},
-            {'label': 'September', 'value': 8},
-            {'label': 'October', 'value': 9},
-            {'label': 'November', 'value': 10},
-            {'label': 'Dezember', 'value': 11}
-        ]"></wheel-select>
+    <body layout horizontal center-justified>
+        <wheel-select options="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30]" flex></wheel-select>
+        <wheel-select flex>
+            <option label="January" value="0"></option>
+            <option label="Feburary" value="1"></option>
+            <option label="March" value="2"></option>
+            <option label="April" value="3"></option>
+            <option label="May" value="4"></option>
+            <option label="June" value="5"></option>
+            <option label="July" value="6"></option>
+            <option label="August" value="7"></option>
+            <option label="September" value="8"></option>
+            <option label="October" value="9"></option>
+            <option label="November" value="10"></option>
+            <option label="Dezember" value="11"></option>
+        </wheel-select>
 
     </body>
 </html>
