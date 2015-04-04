@@ -16,5 +16,8 @@
   ],
   "dependencies": {
     "polymer": "Polymer/polymer#~0.5.5"
+  },
+  "devDependencies": {
+    "core-component-page": "Polymer/core-component-page#~0.5.5"
   }
 }

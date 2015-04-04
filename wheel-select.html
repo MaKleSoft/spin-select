@@ -1,3 +1,35 @@
+<!--
+@element wheel-select
+
+The `<wheel-select>` element allows selecting one out of a list options by scrolling through a wheel
+similar to the native `<select>` widget in iOS. The element api is modelled after the regular HTML `<select>`
+element. Options can be specified either directly through the `options` property or through `<option>`
+elements.
+
+`<wheel-select>` uses [Zinga Scroller](https://github.com/zynga/scroller) for its scrolling logic.
+
+Example usage:
+
+    <wheel-select>
+        <option label="January" value="0"></option>
+        <option label="Feburary" value="1"></option>
+        <option label="March" value="2"></option>
+        <option label="April" value="3"></option>
+        <option label="May" value="4"></option>
+        <option label="June" value="5"></option>
+        <option label="July" value="6"></option>
+        <option label="August" value="7"></option>
+        <option label="September" value="8"></option>
+        <option label="October" value="9"></option>
+        <option label="November" value="10"></option>
+        <option label="Dezember" value="11"></option>
+    </wheel-select>
+-->
+<!--
+@attribute selectedIndex
+@default 0
+The index of the selected option.
+-->
 <link rel="import" href="../polymer/polymer.html">
 <script src="zynga-scroller/Animate.js"></script>
 <script src="zynga-scroller/Scroller.js"></script>
@@ -15,6 +47,7 @@
         <div class="slid"></div>
         <div flex class="screen bottom"></div>
     </div>
+
     <content></content>
 
 </template>
