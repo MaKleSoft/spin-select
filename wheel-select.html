@@ -38,7 +38,7 @@
             options: [],
             faceCount: 20,
             faceHeight: 70,
-            selected: 0
+            selectedIndex: 0
         },
 
         observe: {
@@ -163,18 +163,18 @@
         },
 
         scrollingComplete: function() {
-            if (this.selected != this._optInd) {
+            if (this.selectedIndex != this._optInd) {
                 this._ignoreSelectedChange = true;
             }
-            this.selected = this._optInd;
+            this.selectedIndex = this._optInd;
         },
 
-        selectedChanged: function(old) {
+        selectedIndexChanged: function(old) {
             if (!this._ignoreSelectedChange) {
                 var i = Math.round((this.scroller.getValues().top - scrollBuffer) / stepSize);
                 var l = this.options.length;
-                var prev = i - i % l - l + this.selected;
-                var next = i + (l - i % l) - l + this.selected;
+                var prev = i - i % l - l + this.selectedIndex;
+                var next = i + (l - i % l) - l + this.selectedIndex;
                 var scrollTop = (Math.abs(i - prev) < Math.abs(i - next) ? prev : next) * stepSize;
                 scrollTop += scrollBuffer;
                 this.scroller.scrollTo(0, scrollTop, true);
@@ -183,7 +183,7 @@
         },
 
         optionTapped: function(e) {
-            this.selected = parseInt(e.target.getAttribute('index'), 10);
+            this.selectedIndex = parseInt(e.target.getAttribute('index'), 10);
         }
 
     });
