@@ -153,11 +153,12 @@
             var faceCount = this._faces.length;
             var optCount = this.options.length;
 
-            var el, i;
+            var el, i, opt;
             for (var j = -Math.floor(faceCount/2), to = Math.ceil(faceCount/2); j < to; j++) {
                 el = this._faces[(faceCount + this._faceInd + j) % faceCount];
                 i = (optCount + this._optInd + j) % optCount;
-                el.innerHTML = this.options[i];
+                opt = typeof this.options[i] === 'object' ? this.options[i] : {value: this.options[i]};
+                el.innerHTML = opt.label || opt.value;
                 el.setAttribute('index', i);
             }
         },
