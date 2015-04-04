@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>scrolling-selector demo</title>
+        <title>wheel-select demo</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui"/>
 
         <script src="../webcomponentsjs/webcomponents.min.js"></script>
 
-        <link rel="import" href="scrolling-selector.html">
+        <link rel="import" href="wheel-select.html">
 
         <style>
-            scrolling-selector {
+            wheel-select {
+                font-family: sans-serif;
                 margin: 100px 0;
             }
         </style>
@@ -17,7 +18,7 @@
     </head>
     <body>
 
-        <scrolling-selector options="[
+        <wheel-select options="[
             'January',
             'Feburary',
             'March',
@@ -30,7 +31,7 @@
             'October',
             'November',
             'Dezember'
-        ]"></scrolling-selector>
+        ]"></wheel-select>
 
     </body>
 </html>

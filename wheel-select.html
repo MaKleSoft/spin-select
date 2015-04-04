@@ -2,11 +2,11 @@
 <script src="zynga-scroller/Animate.js"></script>
 <script src="zynga-scroller/Scroller.js"></script>
 
-<polymer-element name="scrolling-selector" touch-action="pan-y">
+<polymer-element name="wheel-select" touch-action="pan-y">
 
 <template>
 
-    <link href="scrolling-selector.css" rel="stylesheet" type="text/css">
+    <link href="wheel-select.css" rel="stylesheet" type="text/css">
 
     <div id="optionsWheel"></div>
 
@@ -183,7 +183,6 @@
         },
 
         optionTapped: function(e) {
-            console.log(e.target);
             this.selected = parseInt(e.target.getAttribute('index'), 10);
         }
 
