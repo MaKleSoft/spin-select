@@ -25,11 +25,6 @@ Example usage:
         <option label="Dezember" value="11"></option>
     </wheel-select>
 -->
-<!--
-@attribute selectedIndex
-@default 0
-The index of the selected option.
--->
 <link rel="import" href="../polymer/polymer.html">
 <script src="zynga-scroller/Animate.js"></script>
 <script src="zynga-scroller/Scroller.js"></script>
@@ -57,20 +52,54 @@ The index of the selected option.
 (function() {
     'use strict';
 
+    // step size used for grid that the scroller snaps to.
+    // Effectively determines scrolling 'sensitivity'
     var stepSize = 40;
+    // We use a large value for the scrolling bounds of the
+    // scroller logic since we basically want 'infinite scrolling'
     var scrollBuffer = 1000 * stepSize;
+    // Value used for the css `persective` value. Also used for calculating
+    // the effective element height from the wheel radius
     var perspective = 1000;
 
     Polymer({
 
-        _faces: [],
-        _faceInd: 0,
-        _optInd: 0,
+        _faces: [], // dom nodes representing the wheel faces
+        _faceInd: 0, // index of wheel face currently pointing towards the user
+        _optInd: 0, // index of the option currently facing the user
 
         publish: {
+            /**
+             * @attribute options
+             * @default []
+             * An array of options available for selection. The items of this array can either be objects
+             * containing a label and value (e.g. `[{label: "May", value: 4}, ...]`) or primitive values
+             * (e.g. `[1, 2, 3, 4, 5, ...]`. In the latter case, the array items are interpreted as values
+             * Options can also be specified through `<option>` elements inside the element. In this case,
+             * the `options` property will be populated automatically
+             */
             options: [],
+            /**
+             * @attribute faceCount
+             * @default 70
+             * The number of faces used for the options wheel. Options are rendered
+             * onto the wheel faces dynamically as the user scrolls so this number is
+             * completely independent from the number of options and only determines the
+             * look of the wheel. A larger number means a bigger wheel
+             */
             faceCount: 20,
+            /**
+             * @attribute faceHeight
+             * @default 70
+             * The 'face height' used when building the options wheel
+             * A larger number means a bigger wheel
+             */
             faceHeight: 70,
+            /**
+             * @attribute selectedIndex
+             * @default 0
+             * The index of the selected option.
+             */
             selectedIndex: 0
         },
 
@@ -80,6 +109,8 @@ The index of the selected option.
         },
 
         domReady: function() {
+            // If no options are specified through the `options` property,
+            // check distributed nodes for `option` elements and use those for options
             this.options = this.options && this.options.length ?
                 this.options : this.querySelectorAll('option');
             this.setupScroller();
@@ -87,6 +118,7 @@ The index of the selected option.
             this.setupEventListeners();
         },
 
+        // Initializes the scroller logic
         setupScroller: function() {
             var scroller = this.scroller = new Scroller(this.scroll.bind(this), {
                 scrollingX: false,
@@ -99,11 +131,13 @@ The index of the selected option.
             scroller.setSnapSize(0, stepSize);
         },
 
+        // Sets up event listeners used for scrolling interactions
         setupEventListeners: function() {
             var scroller = this.scroller;
             var scrolling = false;
 
             if ('ontouchstart' in window) {
+                // touch-enabled devices
                 this.addEventListener('touchstart', function(e) {
                     scroller.doTouchStart(e.touches, e.timeStamp);
                     scrolling = true;
@@ -121,6 +155,7 @@ The index of the selected option.
                     scrolling = false;
                 }, false);
             } else {
+                // devices without touch
                 this.addEventListener('mousedown', function(e) {
                     scroller.doTouchStart([e], e.timeStamp);
                     scrolling = true;
@@ -140,6 +175,7 @@ The index of the selected option.
 
         },
 
+        // Renders the 'option wheel'
         renderWheel: function() {
             var n = this.faceCount;
             var l = this.faceHeight;
@@ -147,6 +183,7 @@ The index of the selected option.
             var r = l / 2 / Math.tan(a);
             var wheel = this.$.optionsWheel;
 
+            // Remove any previous faces
             while (wheel.firstChild) {
                 wheel.removeChild(wheel.firstChild);
             }
@@ -155,6 +192,7 @@ The index of the selected option.
             this.style.height = 2 * r * perspective / (perspective + r) + 'px';
             wheel.style.transformOrigin = 'center center ' + (-r) + 'px';
 
+            // Generate faces
             this._faces = [];
             var el;
             for (var i = 0; i < n ; i++) {
@@ -169,6 +207,7 @@ The index of the selected option.
             this.updateFaces();
         },
 
+        // Scroll handler. Updates the wheel rotation based on the scroll position of the scroller logic
         scroll: function(x, y) {
             var i = (y - scrollBuffer) / stepSize;
             var a = this._a * i;
@@ -176,35 +215,49 @@ The index of the selected option.
             var oCount = this.options.length;
             var fCount = this.faceCount;
 
+            // Update current option and face index based on scroll position
             this._optInd = (oCount + Math.round(i % oCount)) % oCount;
             this._faceInd = (fCount + Math.round(i % fCount)) % fCount;
 
             this.updateFaces();
 
+            // Update wheel rotation
             wheel.style.transform = wheel.style.webkitTransform = 'rotateX(' + a + 'rad)';
         },
 
+        // Updates the face labels based on the current wheel configuration. Options are supposed to
+        // repeat 'endlessly' when scrolling through the wheel. This should work independently from
+        // the number of available options and wheel faces
         updateFaces: function() {
             var faceCount = this._faces.length;
             var optCount = this.options.length;
 
+            // Starting from the currently forward-facing wheel face, we update all face labels so that
+            // it appears as if the options are endlessly repeating
             var el, i, opt;
             for (var j = -Math.floor(faceCount/2), to = Math.ceil(faceCount/2); j < to; j++) {
                 el = this._faces[(faceCount + this._faceInd + j) % faceCount];
                 i = (optCount + this._optInd + j) % optCount;
+                // If the option is a primitive value, wrap in in an object
                 opt = typeof this.options[i] === 'object' ? this.options[i] : {value: this.options[i]};
+                // If there is no label, simply display the 'raw' value
                 el.innerHTML = opt.label || opt.value;
-                el.setAttribute('index', i);
+                // This is used for easily determining the option index when this face is tapped
+                el.setAttribute('opt-index', i);
             }
         },
 
+        // Handler for when the scroller stops. Updates `selectedIndex` property
         scrollingComplete: function() {
+            // Make sure that element does not respond to this particular index change
             if (this.selectedIndex != this._optInd) {
                 this._ignoreSelectedChange = true;
             }
             this.selectedIndex = this._optInd;
         },
 
+        // Change handler for `selectedIndex` property. Srolls the wheel to the
+        // closest occurence of the selected option
         selectedIndexChanged: function(old) {
             if (!this._ignoreSelectedChange) {
                 var i = Math.round((this.scroller.getValues().top - scrollBuffer) / stepSize);
@@ -218,8 +271,9 @@ The index of the selected option.
             this._ignoreSelectedChange = false;
         },
 
+        // Tap handler for wheel faces. Updates the `selectedIndex` property with the corresponding value
         optionTapped: function(e) {
-            this.selectedIndex = parseInt(e.target.getAttribute('index'), 10);
+            this.selectedIndex = parseInt(e.target.getAttribute('opt-index'), 10);
         }
 
     });
