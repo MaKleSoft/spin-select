@@ -1,10 +1,10 @@
 {
-  "name": "masonry-layout",
+  "name": "wheel-select",
   "version": "0.0.0",
   "authors": [
     "Martin Kleinschrodt <martin@maklesoft.com>"
   ],
-  "main": "masonry-layout.html",
+  "main": "wheel-select.html",
   "license": "MIT",
   "private": true,
   "ignore": [
