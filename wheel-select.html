@@ -262,17 +262,21 @@ Example usage:
 
         // Handler for when the scroller stops. Updates `selectedIndex` property
         scrollingComplete: function() {
-            // Make sure that element does not respond to this particular index change
-            if (this.selectedIndex != this._optInd) {
+            var changed = this.selectedIndex != this._optInd;
+            if (changed) {
+                // Make sure that element does not respond to this particular index change
                 this._ignoreSelectedChange = true;
             }
             this.selectedIndex = this._optInd;
+            if (changed) {
+                this.fire('select', this.selectedOption);
+            }
         },
 
         // Change handler for `selectedIndex` property. Srolls the wheel to the
         // closest occurence of the selected option and updates the `selectedOption` property
         selectedIndexChanged: function(old) {
-            if (!this._ignoreSelectedChange) {
+            if (!this._ignoreSelectedChange && this.scroller) {
                 var i = Math.round((this.scroller.getValues().top - scrollBuffer) / stepSize);
                 var l = this.options.length;
                 var prev = i - i % l - l + this.selectedIndex;
@@ -313,6 +317,7 @@ Example usage:
         // Tap handler for wheel faces. Updates the `selectedIndex` property with the corresponding value
         optionTapped: function(e) {
             this.selectedIndex = parseInt(e.target.getAttribute('opt-index'), 10);
+            this.fire('select', this.selectedOption);
         }
 
     });
