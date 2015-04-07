@@ -3,6 +3,7 @@
     position: relative;
     overflow: hidden;
     -webkit-user-select: none;
+    perspective: 1000px;
 }
 
 ::content > * {
