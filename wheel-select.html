@@ -95,6 +95,10 @@ Example usage:
              * A larger number means a bigger wheel
              */
             faceHeight: 70,
+            repeat: {
+                value: false,
+                reflect: true
+            },
             /**
              * @attribute selectedIndex
              * @default 0
@@ -138,10 +142,16 @@ Example usage:
                 snapping: true,
                 scrollingComplete: this.scrollingComplete.bind(this)
             });
-
-            scroller.setDimensions(1, 1, 1, 2 * scrollBuffer);
-            scroller.scrollTo(0, scrollBuffer);
             scroller.setSnapSize(0, stepSize);
+            this.updateScrollBounds();
+        },
+
+        updateScrollBounds: function() {
+            var scrollHeight = this.repeat ? 2 * scrollBuffer : (this.options.length - 1) * stepSize;
+            var scrollOffset = this.repeat ? scrollBuffer : 0;
+
+            this.scroller.setDimensions(1, 1, 1, scrollHeight);
+            this.scroller.scrollTo(0, scrollOffset);
         },
 
         // Sets up event listeners used for scrolling interactions
@@ -222,7 +232,8 @@ Example usage:
 
         // Scroll handler. Updates the wheel rotation based on the scroll position of the scroller logic
         scroll: function(x, y) {
-            var i = (y - scrollBuffer) / stepSize;
+            var scrollOffset = this.repeat ? scrollBuffer : 0;
+            var i = (y - scrollOffset) / stepSize;
             var a = this._a * i;
             var wheel = this.$.optionsWheel;
             var oCount = this.options.length;
@@ -232,7 +243,9 @@ Example usage:
             this._optInd = (oCount + Math.round(i % oCount)) % oCount;
             this._faceInd = (fCount + Math.round(i % fCount)) % fCount;
 
-            this.updateFaces();
+            if (y >= 0 && y <= this.scroller.getScrollMax().top) {
+                this.updateFaces();
+            }
 
             // Update wheel rotation
             wheel.style.transform = wheel.style.webkitTransform = 'rotateX(' + a + 'rad)';
@@ -247,14 +260,14 @@ Example usage:
 
             // Starting from the currently forward-facing wheel face, we update all face labels so that
             // it appears as if the options are endlessly repeating
-            var el, i, opt;
+            var el, i, opt, label;
             for (var j = -Math.floor(faceCount/2), to = Math.ceil(faceCount/2); j < to; j++) {
                 el = this._faces[(faceCount + this._faceInd + j) % faceCount];
-                i = (optCount + this._optInd + j) % optCount;
+                i = this.repeat ? (optCount + this._optInd + j) % optCount : this._optInd + j;
                 // If the option is a primitive value, wrap in in an object
                 opt = typeof this.options[i] === 'object' ? this.options[i] : {value: this.options[i]};
                 // If there is no label, simply display the 'raw' value
-                el.innerHTML = opt.label || opt.value;
+                el.innerHTML = opt.label || opt.value || '';
                 // This is used for easily determining the option index when this face is tapped
                 el.setAttribute('opt-index', i);
             }
@@ -277,12 +290,13 @@ Example usage:
         // closest occurence of the selected option and updates the `selectedOption` property
         selectedIndexChanged: function(old) {
             if (!this._ignoreSelectedChange && this.scroller) {
-                var i = Math.round((this.scroller.getValues().top - scrollBuffer) / stepSize);
+                var scrollOffset = this.repeat ? scrollBuffer : 0;
+                var i = Math.round((this.scroller.getValues().top - scrollOffset) / stepSize);
                 var l = this.options.length;
                 var prev = i - i % l - l + this.selectedIndex;
                 var next = i + (l - i % l) - l + this.selectedIndex;
                 var scrollTop = (Math.abs(i - prev) < Math.abs(i - next) ? prev : next) * stepSize;
-                scrollTop += scrollBuffer;
+                scrollTop += scrollOffset;
                 this.scroller.scrollTo(0, scrollTop, true);
             }
             this._ignoreSelectedChange = false;
