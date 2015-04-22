@@ -121,7 +121,7 @@ Example usage:
 
         observe: {
             'faceCount faceHeight': 'renderWheel',
-            'options': 'updateFaces'
+            'options repeat': 'updateFacesAndScrollBounds'
         },
 
         domReady: function() {
@@ -147,11 +147,13 @@ Example usage:
         },
 
         updateScrollBounds: function() {
-            var scrollHeight = this.repeat ? 2 * scrollBuffer : (this.options.length - 1) * stepSize;
-            var scrollOffset = this.repeat ? scrollBuffer : 0;
+            if (this.scroller) {
+                var scrollHeight = this.repeat ? 2 * scrollBuffer : (this.options.length - 1) * stepSize;
+                var scrollOffset = this.repeat ? scrollBuffer : 0;
 
-            this.scroller.setDimensions(1, 1, 1, scrollHeight);
-            this.scroller.scrollTo(0, scrollOffset);
+                this.scroller.setDimensions(1, 1, 1, scrollHeight);
+                this.scroller.scrollTo(0, scrollOffset);
+            }
         },
 
         // Sets up event listeners used for scrolling interactions
@@ -332,6 +334,11 @@ Example usage:
         optionTapped: function(e) {
             this.selectedIndex = parseInt(e.target.getAttribute('opt-index'), 10);
             this.fire('select', this.selectedOption);
+        },
+
+        updateFacesAndScrollBounds: function() {
+            this.updateScrollBounds();
+            this.updateFaces();
         }
 
     });
