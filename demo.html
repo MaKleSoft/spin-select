@@ -21,7 +21,7 @@
                         padding: 20px;
                     }
 
-                    :host > div {
+                    :host > div, :host > label {
                         padding: 5px;
                         text-align: center;
                     }
@@ -32,7 +32,7 @@
                     }
                 </style>
 
-                <wheel-select value="{{ value }}"
+                <wheel-select value="{{ value }}" repeat="{{ repeat }}"
                               selectedIndex="{{ selectedIndex }}"
                               selectedOption="{{ selectedOption }}"
                               on-select="{{ selectHandler }}">
@@ -52,6 +52,10 @@
 
                 <hr>
 
+                <label>Repeat options
+                    <input type="checkbox" checked="{{ repeat }}" />
+                </label>
+
                 <div>index: {{ selectedIndex }}</div>
                 <div>value: {{ value }}</div>
                 <div>label: {{ selectedOption.label }}</div>
@@ -60,6 +64,7 @@
 
             <script>
                 Polymer({
+                    repeat: true,
                     selectHandler: console.log.bind(console, 'select')
                 });
             </script>
