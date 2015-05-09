@@ -121,7 +121,7 @@ Example usage:
 
         observe: {
             'faceCount faceHeight': 'renderWheel',
-            'options repeat': 'updateFacesAndScrollBounds'
+            'options repeat': 'optionsUpdated'
         },
 
         domReady: function() {
@@ -131,8 +131,8 @@ Example usage:
                 this.options : Array.prototype.slice.call(this.querySelectorAll('option'));
             this.setupScroller();
             this.renderWheel();
+            this.updateScrollBounds();
             this.setupEventListeners();
-            this.selectedIndexChanged();
         },
 
         optionAt: function(i) {
@@ -148,18 +148,18 @@ Example usage:
                 scrollingComplete: this.scrollingComplete.bind(this)
             });
             scroller.setSnapSize(0, stepSize);
-            this.updateScrollBounds();
         },
 
         updateScrollBounds: function() {
             if (this.scroller) {
-                var scrollHeight = this.repeat || typeof this.options == 'function' ?
+                var scrollHeight = this.repeat || typeof this.options == 'function' || !this.options.length ?
                     2 * scrollBuffer : (this.options.length - 1) * stepSize;
                 var scrollOffset = this._scrollOffset =
                     this.repeat || typeof this.options == 'function' ? scrollBuffer : 0;
 
                 this.scroller.setDimensions(1, 1, 1, scrollHeight);
-                this.scroller.scrollTo(0, scrollOffset);
+                this.scroller.scrollTo(0, scrollOffset, false);
+                this.updateScrollPosition(false);
             }
         },
 
@@ -264,7 +264,6 @@ Example usage:
         // the number of available options and wheel faces
         updateFaces: function() {
             var faceCount = this._faces.length;
-            var optCount = this.options.length;
 
             // Starting from the currently forward-facing wheel face, we update all face labels so that
             // it appears as if the options are endlessly repeating
@@ -275,7 +274,7 @@ Example usage:
                 opt = this.optionAt(optIndex);
                 // If there is no label, simply display the 'raw' value
                 label = opt && (opt.label || opt.value);
-                el.innerHTML = label !== null || label !== undefined ? label : '';
+                el.innerHTML = label !== null && label !== undefined ? label : '';
                 // This is used for easily determining the option index when this face is tapped
                 el.setAttribute('scroll-index', optIndex);
             }
@@ -290,29 +289,15 @@ Example usage:
             }
             this.selectedIndex = this._optInd;
             if (changed) {
-                this.fire('select', this.selectedOption);
+                this.fire('select', this.optionAt(this.selectedIndex));
             }
         },
 
         // Change handler for `selectedIndex` property. Srolls the wheel to the
         // closest occurence of the selected option and updates the `selectedOption` property
-        selectedIndexChanged: function(old) {
-            if (!this._ignoreSelectedChange && this.scroller) {
-                var scrollOffset = this._scrollOffset;
-                var scrollTop;
-
-                if (typeof this.options == 'function') {
-                    scrollTop = scrollOffset + this.selectedIndex * stepSize;
-                } else {
-                    var i = Math.round((this.scroller.getValues().top - scrollOffset) / stepSize);
-                    var l = this.options.length;
-                    var prev = i - i % l - l + this.selectedIndex;
-                    var next = i + (l - i % l) - l + this.selectedIndex;
-                    scrollTop = (Math.abs(i - prev) < Math.abs(i - next) ? prev : next) * stepSize;
-                    scrollTop += scrollOffset;
-                }
-
-                this.scroller.scrollTo(0, scrollTop, true);
+        selectedIndexChanged: function() {
+            if (!this._ignoreSelectedChange) {
+                this.updateScrollPosition(true);
             }
             this._ignoreSelectedChange = false;
 
@@ -321,10 +306,26 @@ Example usage:
             this.value = option && option.value;
         },
 
-        selectedOptionChanged: function() {
-            if (typeof this.options != 'function') {
-                this.selectedIndex = this.options.indexOf(this.selectedOption);
+        updateScrollPosition: function(animate) {
+            if (!this.scroller || !this.options ||
+                typeof this.options != 'function' && !this.options.length) {
+                return;
             }
+
+            var scrollOffset = this._scrollOffset;
+            var scrollTop;
+
+            if (typeof this.options == 'function') {
+                scrollTop = scrollOffset + this.selectedIndex * stepSize;
+            } else {
+                var i = Math.round((this.scroller.getValues().top - scrollOffset) / stepSize);
+                var l = this.options.length;
+                var prev = i - i % l - l + this.selectedIndex;
+                var next = i + (l - i % l) - l + this.selectedIndex;
+                scrollTop = (Math.abs(i - prev) < Math.abs(i - next) ? prev : next) * stepSize;
+                scrollTop += scrollOffset;
+            }
+            this.scroller.scrollTo(0, scrollTop, animate);
         },
 
         valueChanged: function() {
@@ -351,15 +352,16 @@ Example usage:
         optionTapped: function(e) {
             var i = parseInt(e.target.getAttribute('scroll-index'), 10);
             this.selectedIndex = this.optionIndexFromScrollIndex(i);
-            this.fire('select', this.selectedOption);
+            this.fire('select', this.optionAt(this.selectedIndex));
         },
 
         optionIndexFromScrollIndex: function(i) {
             var oCount = this.options.length;
-            return this.repeat && typeof this.options != 'function' ? (oCount + i % oCount) % oCount : i;
+            return this.repeat && typeof this.options != 'function' && oCount ?
+                (oCount + i % oCount) % oCount : i;
         },
 
-        updateFacesAndScrollBounds: function() {
+        optionsUpdated: function() {
             this.updateScrollBounds();
             this.updateFaces();
         }
