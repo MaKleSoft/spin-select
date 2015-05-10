@@ -72,11 +72,37 @@ Example usage:
             /**
              * @attribute options
              * @default []
-             * An array of options available for selection. The items of this array can either be objects
+             * Options available for selection. These can be provided as
+             *
+             * - An array, the items of which can either be objects
              * containing a label and value (e.g. `[{label: "May", value: 4}, ...]`) or primitive values
-             * (e.g. `[1, 2, 3, 4, 5, ...]`. In the latter case, the array items are interpreted as values
-             * Options can also be specified through `<option>` elements inside the element. In this case,
-             * the `options` property will be populated automatically
+             * (e.g. `[1, 2, 3, 4, 5, ...]`. In the latter case, the array items are interpreted as values.
+             * Example:
+             *
+             *     <wheel-select options="[1, 2, 3, 4, 5]"></wheel-select>
+             *
+             * - `<option>` elements inside the element. Example:
+             *
+             *         <wheel-select>
+             *             <option label="January" value="0">
+             *             <option label="February" value="1">
+             *             ...
+             *         </wheel-select>
+             *
+             * - A function generating options from a given scroll index. E.g.:
+             *
+             *         <wheel-select options="{{ dates }}"></wheel-select>
+             *
+             *         ...
+             *
+             *         dates: function(i) {
+             *             var date = new Date();
+             *             date.setDate(date.getDate() + i);
+             *             return {
+             *                 value: date,
+             *                 label: date.toLocaleDateString()
+             *             };
+             *         }
              */
             options: [],
             /**
@@ -95,6 +121,12 @@ Example usage:
              * A larger number means a bigger wheel
              */
             faceHeight: 70,
+            /**
+             * @attribute repeat
+             * @default false
+             * If true, values will repeat periodically, allowing the user to scroll endlessly in both
+             * directions
+             */
             repeat: {
                 value: false,
                 reflect: true
@@ -108,13 +140,17 @@ Example usage:
             /**
              * @attribute selectedOption
              * @default null
-             * The selected option.
+             * The selected option. This property is only useful for one-way binding, i.e. changing the value
+             * of this property will **not** cause the `selectedIndex` or `value` properties to be updated.
              */
             selectedOption: 0,
             /**
              * @attribute value
              * @default null
-             * The value of the selected option.
+             * The value of the selected option. Can be used for two-way binding, i.e. if the `value`
+             * property is changed, the `selectedIndex` property will be updated automatically with the
+             * index of the first option with that value. However, this does **not** happen if the
+             * `options` property is a function instead of an array.
              */
             value: null
         },
