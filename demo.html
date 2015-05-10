@@ -60,12 +60,26 @@
                 <div>value: {{ value }}</div>
                 <div>label: {{ selectedOption.label }}</div>
 
+                <hr>
+
+                <wheel-select options="{{ dates }}"><wheel-select>
+
             </template>
 
             <script>
                 Polymer({
                     repeat: true,
-                    selectHandler: console.log.bind(console, 'select')
+
+                    selectHandler: console.log.bind(console, 'select'),
+
+                    dates: function(i) {
+                        var date = new Date();
+                        date.setDate(date.getDate() + i);
+                        return {
+                            value: date,
+                            label: date.toLocaleDateString()
+                        };
+                    }
                 });
             </script>
         </polymer-element>
