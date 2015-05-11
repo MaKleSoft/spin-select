@@ -1,0 +1,32 @@
+{
+  "name": "spin-select",
+  "authors": [
+    "Martin Kleinschrodt <martin@maklesoft.com>"
+  ],
+  "main": "spin-select.html",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#~0.5.5"
+  },
+  "devDependencies": {
+    "core-component-page": "Polymer/core-component-page#~0.5.5"
+  },
+  "_release": "dc139ff251",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "dc139ff251cf67fbaf8b76c691bd1efaeccca21b"
+  },
+  "_source": "/Users/martin/workspace/polymer-tools/bin/spin-select",
+  "_target": "master",
+  "_originalSource": "./",
+  "_direct": true
+}

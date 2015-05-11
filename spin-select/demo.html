@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>spin-select demo</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui"/>
+
+        <script src="../webcomponentsjs/webcomponents.min.js"></script>
+
+        <link rel="import" href="../polymer/polymer.html">
+        <link rel="import" href="spin-select.html">
+
+    </head>
+    <body>
+
+        <polymer-element name="spin-select-demo" layout vertical>
+            <template>
+
+                <style>
+                    :host {
+                        font-family: sans-serif;
+                        padding: 20px;
+                    }
+
+                    :host > div, :host > label {
+                        padding: 5px;
+                        text-align: center;
+                    }
+
+                    hr {
+                        width: 100%;
+                        margin: 20px 0;
+                    }
+                </style>
+
+                <spin-select value="{{ value }}" repeat="{{ repeat }}"
+                              selectedIndex="{{ selectedIndex }}"
+                              selectedOption="{{ selectedOption }}"
+                              on-select="{{ selectHandler }}">
+                    <option label="January" value="1"></option>
+                    <option label="Feburary" value="2"></option>
+                    <option label="March" value="3"></option>
+                    <option label="April" value="4"></option>
+                    <option label="May" value="5"></option>
+                    <option label="June" value="6"></option>
+                    <option label="July" value="7"></option>
+                    <option label="August" value="8"></option>
+                    <option label="September" value="9"></option>
+                    <option label="October" value="10"></option>
+                    <option label="November" value="11"></option>
+                    <option label="Dezember" value="12"></option>
+                </spin-select>
+
+                <hr>
+
+                <label>Repeat options
+                    <input type="checkbox" checked="{{ repeat }}" />
+                </label>
+
+                <div>index: {{ selectedIndex }}</div>
+                <div>value: {{ value }}</div>
+                <div>label: {{ selectedOption.label }}</div>
+
+                <hr>
+
+                <spin-select options="{{ dates }}"><spin-select>
+
+            </template>
+
+            <script>
+                Polymer({
+                    repeat: true,
+
+                    selectHandler: console.log.bind(console, 'select'),
+
+                    dates: function(i) {
+                        var date = new Date();
+                        date.setDate(date.getDate() + i);
+                        return {
+                            value: date,
+                            label: date.toLocaleDateString()
+                        };
+                    }
+                });
+            </script>
+        </polymer-element>
+
+        <spin-select-demo fit></spin-select-demo>
+
+    </body>
+</html>
