@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>wheel-select demo</title>
+        <title>spin-select demo</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui"/>
 
         <script src="../webcomponentsjs/webcomponents.min.js"></script>
 
         <link rel="import" href="../polymer/polymer.html">
-        <link rel="import" href="wheel-select.html">
+        <link rel="import" href="spin-select.html">
 
     </head>
     <body>
 
-        <polymer-element name="wheel-select-demo" layout vertical>
+        <polymer-element name="spin-select-demo" layout vertical>
             <template>
 
                 <style>
@@ -32,7 +32,7 @@
                     }
                 </style>
 
-                <wheel-select value="{{ value }}" repeat="{{ repeat }}"
+                <spin-select value="{{ value }}" repeat="{{ repeat }}"
                               selectedIndex="{{ selectedIndex }}"
                               selectedOption="{{ selectedOption }}"
                               on-select="{{ selectHandler }}">
@@ -48,7 +48,7 @@
                     <option label="October" value="10"></option>
                     <option label="November" value="11"></option>
                     <option label="Dezember" value="12"></option>
-                </wheel-select>
+                </spin-select>
 
                 <hr>
 
@@ -62,7 +62,7 @@
 
                 <hr>
 
-                <wheel-select options="{{ dates }}"><wheel-select>
+                <spin-select options="{{ dates }}"><spin-select>
 
             </template>
 
@@ -84,7 +84,7 @@
             </script>
         </polymer-element>
 
-        <wheel-select-demo fit></wheel-select-demo>
+        <spin-select-demo fit></spin-select-demo>
 
     </body>
 </html>

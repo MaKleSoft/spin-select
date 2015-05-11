@@ -1,16 +1,16 @@
 <!--
-@element wheel-select
+@element spin-select
 
-The `<wheel-select>` element allows selecting one out of a list options by scrolling through a wheel
+The `<spin-select>` element allows selecting one out of a list options by scrolling through a wheel
 similar to the native `<select>` widget in iOS. The element api is modelled after the regular HTML `<select>`
 element. Options can be specified either directly through the `options` property or through `<option>`
 elements.
 
-`<wheel-select>` uses [Zinga Scroller](https://github.com/zynga/scroller) for its scrolling logic.
+`<spin-select>` uses [Zinga Scroller](https://github.com/zynga/scroller) for its scrolling logic.
 
 Example usage:
 
-    <wheel-select>
+    <spin-select>
         <option label="January" value="0"></option>
         <option label="Feburary" value="1"></option>
         <option label="March" value="2"></option>
@@ -23,17 +23,17 @@ Example usage:
         <option label="October" value="9"></option>
         <option label="November" value="10"></option>
         <option label="Dezember" value="11"></option>
-    </wheel-select>
+    </spin-select>
 -->
 <link rel="import" href="../polymer/polymer.html">
 <script src="zynga-scroller/Animate.js"></script>
 <script src="zynga-scroller/Scroller.js"></script>
 
-<polymer-element name="wheel-select" touch-action="pan-y">
+<polymer-element name="spin-select" touch-action="pan-y">
 
 <template>
 
-    <link href="wheel-select.css" rel="stylesheet" type="text/css">
+    <link href="spin-select.css" rel="stylesheet" type="text/css">
 
     <div id="optionsWheel"></div>
 
@@ -79,19 +79,19 @@ Example usage:
              * (e.g. `[1, 2, 3, 4, 5, ...]`. In the latter case, the array items are interpreted as values.
              * Example:
              *
-             *     <wheel-select options="[1, 2, 3, 4, 5]"></wheel-select>
+             *     <spin-select options="[1, 2, 3, 4, 5]"></spin-select>
              *
              * - `<option>` elements inside the element. Example:
              *
-             *         <wheel-select>
+             *         <spin-select>
              *             <option label="January" value="0">
              *             <option label="February" value="1">
              *             ...
-             *         </wheel-select>
+             *         </spin-select>
              *
              * - A function generating options from a given scroll index. E.g.:
              *
-             *         <wheel-select options="{{ dates }}"></wheel-select>
+             *         <spin-select options="{{ dates }}"></spin-select>
              *
              *         ...
              *

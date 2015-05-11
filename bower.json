@@ -1,10 +1,10 @@
 {
-  "name": "wheel-select",
-  "version": "0.1.0",
+  "name": "spin-select",
+  "version": "0.2.1",
   "authors": [
     "Martin Kleinschrodt <martin@maklesoft.com>"
   ],
-  "main": "wheel-select.html",
+  "main": "spin-select.html",
   "license": "MIT",
   "private": true,
   "ignore": [
